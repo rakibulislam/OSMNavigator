@@ -379,8 +379,9 @@ public class MapActivity<MainActivity> extends Activity implements MapEventsRece
 		btnSpeakRoute.setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View arg0) {
-				speakOutTheRoute();				
-				Toast.makeText(MapActivity.this, "SPEAK OUT THE ROUTE !!!", Toast.LENGTH_SHORT).show();				
+//				speakOutTheRoute();	
+				currentLocation();
+//				Toast.makeText(MapActivity.this, "SPEAK OUT THE ROUTE !!!", Toast.LENGTH_SHORT).show();				
 			}
 
 		});		
@@ -408,6 +409,13 @@ public class MapActivity<MainActivity> extends Activity implements MapEventsRece
 				myTTS.speak(MapActivity.mRoad.mNodes.get(i).mInstructions, TextToSpeech.QUEUE_ADD, null);
 				myTTS.speak("...", TextToSpeech.QUEUE_ADD, null);			
 			}	
+		}
+	}
+	
+	private void currentLocation() {				
+		for (int i = 0; i < MapActivity.mRoad.mNodes.size(); i++){
+			myTTS.speak(MapActivity.mRoad.mNodes.get(i).mLocation.toString(), TextToSpeech.QUEUE_ADD, null);
+			myTTS.speak("...", TextToSpeech.QUEUE_ADD, null);			
 		}
 	}
 
@@ -446,17 +454,7 @@ public class MapActivity<MainActivity> extends Activity implements MapEventsRece
 		//STATIC - outState.putParcelableArrayList("poi", mPOIs);
 		//STATIC - outState.putParcelable("kml", mKmlDocument);
 		
-		savePrefs();
-		
-//		btnSpeakRoute.setOnClickListener(new View.OnClickListener() {			
-//			@Override
-//			public void onClick(View arg0) {
-////				speakOutTheRoute();				
-//				Toast.makeText(MapActivity.this, "SPEAK OUT THE ROUTE !!!", Toast.LENGTH_SHORT).show();
-//				myTTS.speak("Hello World!!!", TextToSpeech.QUEUE_FLUSH, null);				
-//			}
-//
-//		});	
+		savePrefs();	
 	}
 	
 	@Override protected void onActivityResult (int requestCode, int resultCode, Intent intent) {
