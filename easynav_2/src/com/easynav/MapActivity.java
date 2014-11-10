@@ -122,7 +122,7 @@ public class MapActivity<MainActivity> extends Activity implements MapEventsRece
 	protected ArrayList<GeoPoint> viaPoints;
 	protected static int START_INDEX=-2, DEST_INDEX=-1;
 	protected FolderOverlay mItineraryMarkers;
-		//for departure, destination and viapoints
+	//for departure, destination and viapoints
 	protected Marker markerStart, markerDestination;
 	protected ViaPointInfoWindow mViaPointInfoWindow;
 	protected DirectedLocationOverlay myLocationOverlay;
@@ -179,7 +179,6 @@ public class MapActivity<MainActivity> extends Activity implements MapEventsRece
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-//		Button btnSpeakRoute;
 		btnSpeakRoute = (Button) findViewById(R.id.btnSpeakRoute);
 		
 		myTTS = new TextToSpeech(this, (OnInitListener) this);
@@ -381,22 +380,10 @@ public class MapActivity<MainActivity> extends Activity implements MapEventsRece
 			@Override
 			public void onClick(View arg0) {
 				speakOutTheRoute();				
-				Toast.makeText(MapActivity.this, "SPEAK OUT THE ROUTE !!!", Toast.LENGTH_SHORT).show();
-				
-//				myTTS.speak("Hello World!!!", TextToSpeech.QUEUE_FLUSH, null);				
+				Toast.makeText(MapActivity.this, "SPEAK OUT THE ROUTE !!!", Toast.LENGTH_SHORT).show();				
 			}
 
-		});	
-		
-//		btnSpeakRoute.setOnLongClickListener(new OnLongClickListener() {
-//
-//		@Override
-//		public boolean onLongClick(View arg0) {
-//			myTTS.speak("Hello World!!!", TextToSpeech.QUEUE_ADD, null);
-//			return true;
-//		}
-//	   });
-
+		});		
 		
 	}
 	
@@ -412,33 +399,15 @@ public class MapActivity<MainActivity> extends Activity implements MapEventsRece
         }
         else if (initStatus == TextToSpeech.ERROR) {
             Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
-        }
-        
-//		btnSpeakRoute.setOnClickListener(new View.OnClickListener() {			
-//			@Override
-//			public void onClick(View arg0) {
-////				speakOutTheRoute();				
-//				Toast.makeText(MapActivity.this, "SPEAK OUT THE ROUTE !!!", Toast.LENGTH_SHORT).show();
-//				myTTS.speak("Hello World!!!", TextToSpeech.QUEUE_FLUSH, null);				
-//			}
-//
-//		});	
-        
-//		btnSpeakRoute.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View arg0) {
-////				speakOutTheRoute();
-////				myTTS.speak("Hello World!!!", TextToSpeech.QUEUE_ADD, null);
-//				Toast.makeText(MapActivity.this, "Button Clicked", Toast.LENGTH_SHORT).show();
-//			}
-//
-//		});	
+        }        
     }
 	
 	private void speakOutTheRoute() {
-		for (int i = 0; i < MapActivity.mRoad.mNodes.size(); i++){
-			myTTS.speak(MapActivity.mRoad.mNodes.get(i).mInstructions, TextToSpeech.QUEUE_ADD, null);
-			myTTS.speak("..", TextToSpeech.QUEUE_ADD, null);			
+		for (int j = 0; j < 3; j++){
+			for (int i = 0; i < MapActivity.mRoad.mNodes.size(); i++){
+				myTTS.speak(MapActivity.mRoad.mNodes.get(i).mInstructions, TextToSpeech.QUEUE_ADD, null);
+				myTTS.speak("...", TextToSpeech.QUEUE_ADD, null);			
+			}	
 		}
 	}
 
