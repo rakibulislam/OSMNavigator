@@ -118,12 +118,12 @@ public final class R {
         public static final int menu_destination=0x7f07002f;
         public static final int menu_itinerary=0x7f070031;
         public static final int menu_none=0x7f070030;
-        public static final int menu_route=0x7f070032;
-        public static final int menu_route_google=0x7f070037;
-        public static final int menu_route_graphhopper_bicycle=0x7f070035;
-        public static final int menu_route_graphhopper_fastest=0x7f070034;
-        public static final int menu_route_graphhopper_pedestrian=0x7f070036;
-        public static final int menu_route_osrm=0x7f070033;
+        public static final int menu_route=0x7f070033;
+        public static final int menu_route_google=0x7f070038;
+        public static final int menu_route_graphhopper_bicycle=0x7f070036;
+        public static final int menu_route_graphhopper_fastest=0x7f070035;
+        public static final int menu_route_graphhopper_pedestrian=0x7f070037;
+        public static final int menu_route_osrm=0x7f070034;
         public static final int name=0x7f07000d;
         public static final int outlineColor=0x7f070014;
         public static final int outlineWidth=0x7f070016;
@@ -131,11 +131,12 @@ public final class R {
         public static final int routeInfo=0x7f070022;
         public static final int search_panel=0x7f07001b;
         public static final int speed=0x7f070023;
+        public static final int spkroute=0x7f070032;
         public static final int styleSpinner=0x7f070010;
         public static final int style_id=0x7f070012;
-        public static final int style_item_menu_cut=0x7f070038;
-        public static final int style_item_menu_none=0x7f070039;
-        public static final int style_option_menu_new=0x7f07003a;
+        public static final int style_item_menu_cut=0x7f070039;
+        public static final int style_item_menu_none=0x7f07003a;
+        public static final int style_option_menu_new=0x7f07003b;
         public static final int thumbnail=0x7f070005;
         public static final int title=0x7f070006;
     }

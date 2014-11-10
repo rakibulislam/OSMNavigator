@@ -134,6 +134,7 @@ public class MapActivity<MainActivity> extends Activity implements MapEventsRece
 	protected boolean mTrackingMode;
 	Button mTrackingModeButton;
 	float mAzimuthAngleSpeed = 0.0f;
+	private final int TTS_CODE = 9;
 
 	protected Polygon mDestinationPolygon; //enclosing polygon of destination location
 	
@@ -181,6 +182,12 @@ public class MapActivity<MainActivity> extends Activity implements MapEventsRece
 //		Button btnSpeakRoute;
 		btnSpeakRoute = (Button) findViewById(R.id.btnSpeakRoute);
 		
+		myTTS = new TextToSpeech(this, (OnInitListener) this);
+		
+		/* Intent installTTSIntent = new Intent();
+         installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+         startActivity(installTTSIntent);
+		*/
 		SharedPreferences prefs = getSharedPreferences("OSMNAVIGATOR", MODE_PRIVATE);
 		
 		MapBoxTileSource.retrieveMapBoxMapId(this);
@@ -370,12 +377,13 @@ public class MapActivity<MainActivity> extends Activity implements MapEventsRece
 			}
 		}
 		
-		btnSpeakRoute.setOnClickListener(new View.OnClickListener() {
+		btnSpeakRoute.setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View arg0) {
-//				speakOutTheRoute();
-//				myTTS.speak("Hello World!!!", TextToSpeech.QUEUE_ADD, null);
+				speakOutTheRoute();				
 				Toast.makeText(MapActivity.this, "SPEAK OUT THE ROUTE !!!", Toast.LENGTH_SHORT).show();
+				
+//				myTTS.speak("Hello World!!!", TextToSpeech.QUEUE_FLUSH, null);				
 			}
 
 		});	
@@ -405,6 +413,16 @@ public class MapActivity<MainActivity> extends Activity implements MapEventsRece
         else if (initStatus == TextToSpeech.ERROR) {
             Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
         }
+        
+//		btnSpeakRoute.setOnClickListener(new View.OnClickListener() {			
+//			@Override
+//			public void onClick(View arg0) {
+////				speakOutTheRoute();				
+//				Toast.makeText(MapActivity.this, "SPEAK OUT THE ROUTE !!!", Toast.LENGTH_SHORT).show();
+//				myTTS.speak("Hello World!!!", TextToSpeech.QUEUE_FLUSH, null);				
+//			}
+//
+//		});	
         
 //		btnSpeakRoute.setOnClickListener(new View.OnClickListener() {
 //			@Override
@@ -460,16 +478,30 @@ public class MapActivity<MainActivity> extends Activity implements MapEventsRece
 		//STATIC - outState.putParcelable("kml", mKmlDocument);
 		
 		savePrefs();
+		
+//		btnSpeakRoute.setOnClickListener(new View.OnClickListener() {			
+//			@Override
+//			public void onClick(View arg0) {
+////				speakOutTheRoute();				
+//				Toast.makeText(MapActivity.this, "SPEAK OUT THE ROUTE !!!", Toast.LENGTH_SHORT).show();
+//				myTTS.speak("Hello World!!!", TextToSpeech.QUEUE_FLUSH, null);				
+//			}
+//
+//		});	
 	}
 	
 	@Override protected void onActivityResult (int requestCode, int resultCode, Intent intent) {
+
 		switch (requestCode) {
+		
 		case ROUTE_REQUEST : 
 			if (resultCode == RESULT_OK) {
 				int nodeId = intent.getIntExtra("NODE_ID", 0);
 				map.getController().setCenter(mRoad.mNodes.get(nodeId).mLocation);
 				Marker roadMarker = (Marker)mRoadNodeMarkers.getItems().get(nodeId);
 				roadMarker.showInfoWindow();
+				
+				
 			}
 			break;
 		case POIS_REQUEST:

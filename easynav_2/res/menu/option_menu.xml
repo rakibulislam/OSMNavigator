@@ -4,6 +4,10 @@
         android:id="@+id/menu_itinerary"
         android:icon="@drawable/ic_menu_itinerary"
         android:title="@string/menu_itinerary"/>
+    <item
+        android:id="@+id/spkroute"
+        android:icon="@drawable/ic_menu_itinerary"
+        android:title="@string/menu_itinerary"/>
    <!--  <item
         android:id="@+id/menu_pois"
         android:icon="@drawable/ic_menu_poi"

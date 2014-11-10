@@ -116,25 +116,21 @@ public class RouteActivity extends Activity implements OnInitListener{
     }
 
 
-	@Override
-	public void onInit(int status) {
-		// TODO Auto-generated method stub
-		
-	}
 
-//    //setup TTS
-//    public void onInit(int initStatus) {
-//     
-//            //check for successful instantiation
-//        if (initStatus == TextToSpeech.SUCCESS) {
-//            if(myTTS.isLanguageAvailable(Locale.US)==TextToSpeech.LANG_AVAILABLE)
-//                myTTS.setLanguage(Locale.US);
-//            	
-//        }
-//        else if (initStatus == TextToSpeech.ERROR) {
-//            Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
-//        }
-//    }
+
+    //setup TTS
+    public void onInit(int initStatus) {
+     
+            //check for successful instantiation
+        if (initStatus == TextToSpeech.SUCCESS) {
+            if(myTTS.isLanguageAvailable(Locale.US)==TextToSpeech.LANG_AVAILABLE)
+                myTTS.setLanguage(Locale.US);
+            	
+        }
+        else if (initStatus == TextToSpeech.ERROR) {
+            Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
+        }
+    }
 	
 	
 	
