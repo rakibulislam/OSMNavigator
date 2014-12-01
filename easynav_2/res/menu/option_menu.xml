@@ -4,11 +4,11 @@
         android:id="@+id/menu_itinerary"
         android:icon="@drawable/ic_menu_itinerary"
         android:title="@string/menu_itinerary"/>
-    <item
+   <!--  <item
         android:id="@+id/spkroute"
         android:icon="@drawable/ic_menu_itinerary"
         android:title="@string/menu_itinerary"/>
-   <!--  <item
+     <item
         android:id="@+id/menu_pois"
         android:icon="@drawable/ic_menu_poi"
         android:title="@string/menu_pois"/>
@@ -52,7 +52,7 @@
 				    android:title="MapsForge"/>
 			</group>
         </menu>
-    </item> -->
+    </item> 
     <item
         android:id="@+id/menu_route"
         android:icon="@android:drawable/ic_menu_more"
@@ -77,7 +77,7 @@
                     android:title="@string/menu_route_google"/>
             </group>
         </menu>
-    </item>
+    </item>-->
     <!--  
     <item
         android:id="@+id/menu_kml"

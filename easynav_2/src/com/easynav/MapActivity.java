@@ -103,6 +103,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -178,7 +180,10 @@ public class MapActivity<MainActivity> extends Activity implements
 	int SeditResId;
 
 	OnlineTileSourceBase MAPBOXSATELLITELABELLED;
-
+	
+	public static boolean routingActive = false;
+	public static int state=0;
+	public static GeoPoint previousPoint = new GeoPoint(0, 0);
 	/**
 	 * IMPORTANT - these API keys and accounts have been provided EXCLUSIVELY to
 	 * OSMNavigator application. Developers of other applications must request
@@ -188,7 +193,7 @@ public class MapActivity<MainActivity> extends Activity implements
 	static final String mapQuestApiKey = "Fmjtd%7Cluubn10zn9%2C8s%3Do5-90rnq6";
 	static final String flickrApiKey = "c39be46304a6c6efda8bc066c185cd7e";
 	static final String geonamesAccount = "mkergall";
-
+	static int repeatPeriodValue=20;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -196,6 +201,13 @@ public class MapActivity<MainActivity> extends Activity implements
 
 		btnSpeakRoute = (Button) findViewById(R.id.btnSpeakRoute);
 
+		final SeekBar seek=(SeekBar) findViewById(R.id.repeatPeriod);
+		seek.setProgress(repeatPeriodValue);
+		
+		final TextView textView = (TextView) findViewById(R.id.period);
+		textView.setTextColor(Color.BLACK);
+    	textView.setTextSize(20);
+		textView.setText(repeatPeriodValue *2 + " m");
 		myTTS = new TextToSpeech(this, (OnInitListener) this);
 
 		/*
@@ -344,7 +356,7 @@ public class MapActivity<MainActivity> extends Activity implements
 
 		// Route and Directions
 		mWhichRouteProvider = prefs.getInt("ROUTE_PROVIDER",
-				GRAPHHOPPER_PEDESTRIAN);
+				GRAPHHOPPER_BICYCLE);
 
 		mRoadNodeMarkers = new FolderOverlay(this);
 		mRoadNodeMarkers.setName("Route Steps"); // rakib
@@ -413,7 +425,13 @@ public class MapActivity<MainActivity> extends Activity implements
 			@Override
 			public void onClick(View arg0) {
 				try {
+					state = 0;
+					previousPoint.setLatitudeE6(myLocationOverlay.getLocation().getLatitudeE6());
+					previousPoint.setLongitudeE6(myLocationOverlay.getLocation().getLongitudeE6());
 					speakOutTheRoute();
+					
+					routingActive = true;
+					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -423,6 +441,32 @@ public class MapActivity<MainActivity> extends Activity implements
 				// currentLocation();
 			}
 
+		});
+		
+		
+		
+		seek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+		    @Override
+		    public void onStopTrackingTouch(SeekBar seekBar) {
+		        // TODO Auto-generated method stub
+		    }
+
+		    @Override
+		    public void onStartTrackingTouch(SeekBar seekBar) {
+		        // TODO Auto-generated method stub
+		    }
+
+		    @Override
+		    public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+		        // TODO Auto-generated method stub
+		    	repeatPeriodValue=progress;
+		    	
+		    	
+		    	textView.setTextColor(Color.BLACK);
+		    	textView.setTextSize(20);
+				textView.setText(repeatPeriodValue *2 + " m");
+		    }
 		});
 
 	}
@@ -443,6 +487,8 @@ public class MapActivity<MainActivity> extends Activity implements
 	}
 
 	private void speakOutTheRoute() throws IOException {
+		
+	     
 		 System.out.println("start point: "+ startPoint );
 		 System.out.println("destinationPoint point: "+ destinationPoint );
 //		 System.out.println("viaPoints: "+ viaPoints ); // not working for some reason, have to investigate
@@ -452,46 +498,56 @@ public class MapActivity<MainActivity> extends Activity implements
 //		 System.out.println("DistanceBetweenTwoGeoPoints: "+distanceBetweenGeoPoints(startPoint, destinationPoint));
 //		 System.out.println("All Nodes: "+ MapActivity.mRoad.mNodes);
 		 
-		for (int i = 0; i < MapActivity.mRoad.mNodes.size(); i++) {
-			System.out.println("iteration: "+i);
-//			System.out.println("My current Location: "+ myLocationOverlay.getLocation());			
-//			System.out.println("Node: "+ i+ MapActivity.mRoad.mNodes.get(i));
-			System.out.println("Node["+i+"]'s Location: "+ MapActivity.mRoad.mNodes.get(i).mLocation);
-			System.out.println("Distance between start point and "+i+"th Node: " + distanceBetweenTwoGeoPoints(startPoint, MapActivity.mRoad.mNodes.get(i).mLocation));
-//			System.out.println("mLocation class: " + MapActivity.mRoad.mNodes.get(i).mLocation.getClass());
-			System.out.println("mDuration: " + MapActivity.mRoad.mNodes.get(i).mDuration);
+
+	//		System.out.println("Node["+i+"]'s Location: "+ MapActivity.mRoad.mNodes.get(i).mLocation);
+		//	System.out.println("Distance between start point and "+i+"th Node: " + distanceBetweenTwoGeoPoints(startPoint, MapActivity.mRoad.mNodes.get(i).mLocation));
+			//System.out.println("mDuration: " + MapActivity.mRoad.mNodes.get(i).mDuration);
 //			System.out.println("mLength: " + MapActivity.mRoad.mNodes.get(i).mLength);
-			System.out.println("mInstructions: " + MapActivity.mRoad.mNodes.get(i).mInstructions);
-			// System.out.println(MapActivity.mRoad.mNodes.get(i).mNextRoadLink);
-			// myTTS.speak(MapActivity.mRoad.mNodes.get(i).mInstructions+MapActivity.mRoad.mNodes.get(i).mLength+"meter",
-			// TextToSpeech.QUEUE_ADD, null);
-//			myTTS.speak(MapActivity.mRoad.mNodes.get(i).mInstructions, TextToSpeech.QUEUE_ADD, null);
-//			myTTS.speak(MapActivity.mRoad.mNodes.get(i).mInstructions+"for "+String.format("%.1f", MapActivity.mRoad.mNodes.get(i).mLength)+" Meters", TextToSpeech.QUEUE_ADD, null);
-//			myTTS.speak(MapActivity.mRoad.mNodes.get(i).mInstructions+"for "+String.format("%.1f", MapActivity.mRoad.mNodes.get(i).mDuration)+" Meters", TextToSpeech.QUEUE_ADD, null);
-//			myTTS.speak("...", TextToSpeech.QUEUE_ADD, null);
+		//	System.out.println("mInstructions: " + MapActivity.mRoad.mNodes.get(i).mInstructions);
+			
 			// Find the user's immediate next node
 			int index = nextRouteIndex();
 			System.out.println("My next node: "+ index);
 			System.out.println("My next node is: "+ MapActivity.mRoad.mNodes.get(index).mLocation);	
 			//speak out the immediate next instruction (immediate node is the index-th node using nextRouteIndex method)
-			myTTS.speak(MapActivity.mRoad.mNodes.get(index).mInstructions+"for "+String.format("%.1f", MapActivity.mRoad.mNodes.get(index).mDuration)+" Meters", TextToSpeech.QUEUE_ADD, null);			
-			System.out.println("--------------------");
-		}
-		// for (int j = 0; j < 3; j++){
-		// for (int i = 0; i < MapActivity.mRoad.mNodes.size(); i++){
-		// myTTS.speak(MapActivity.mRoad.mNodes.get(i).mInstructions,
-		// TextToSpeech.QUEUE_ADD, null);
-		// myTTS.speak("...", TextToSpeech.QUEUE_ADD, null);
-		// }
-		// }
+//			myTTS.speak(MapActivity.mRoad.mNodes.get(index).mInstructions+"for "+String.format("%.1f", MapActivity.mRoad.mNodes.get(index).mDuration)+" Meters", TextToSpeech.QUEUE_ADD, null);
+			
+
+			if(distanceBetweenTwoGeoPoints(previousPoint, myLocationOverlay.getLocation()) > repeatPeriodValue*2 || state != index)
+			{
+				String pre="for ";
+				if (MapActivity.mRoad.mNodes.get(index).mInstructions.contains("turn") ||MapActivity.mRoad.mNodes.get(index).mInstructions.contains("Turn") )
+						pre = "in ";
+				
+				
+				
+				
+				pre += String.format("%d", Math.round(distanceBetweenTwoGeoPoints(MapActivity.mRoad.mNodes.get(index).mLocation, myLocationOverlay.getLocation()))    ) +" Meters";
+				
+				if(distanceBetweenTwoGeoPoints( myLocationOverlay.getLocation(),MapActivity.mRoad.mNodes.get(index).mLocation) < 20)
+					pre = "";
+				
+				if (MapActivity.mRoad.mNodes.get(index).mInstructions.contains("finish") ||MapActivity.mRoad.mNodes.get(index).mInstructions.contains("Finish") )
+					myTTS.speak("you arrive at your destination "+ pre, TextToSpeech.QUEUE_ADD, null);
+					
+				else
+				myTTS.speak(MapActivity.mRoad.mNodes.get(index).mInstructions + pre, TextToSpeech.QUEUE_ADD, null);
+				state = index;
+				
+				previousPoint.setLatitudeE6(myLocationOverlay.getLocation().getLatitudeE6());
+				previousPoint.setLongitudeE6(myLocationOverlay.getLocation().getLongitudeE6());
+				
+			}			
+			
 	}
 	
 	// Returns the next route node's index (so that node's instruction can be spoken out)
 	public int nextRouteIndex() {
 		System.out.println("My current Location: "+ myLocationOverlay.getLocation());
 		GeoPoint currentLocation = myLocationOverlay.getLocation();
-		
-		for (int i = 0; i < MapActivity.mRoad.mNodes.size()-2; i++) { 
+		double nearestPoint = Double.MAX_VALUE;
+		int index=0;
+		for (int i = 0; i < MapActivity.mRoad.mNodes.size()-1; i++) { 
 		float d = distanceBetweenTwoGeoPoints(MapActivity.mRoad.mNodes.get(i).mLocation, MapActivity.mRoad.mNodes.get(i+1).mLocation);
 		float a = distanceBetweenTwoGeoPoints(currentLocation, MapActivity.mRoad.mNodes.get(i).mLocation);
 		float b = distanceBetweenTwoGeoPoints(currentLocation, MapActivity.mRoad.mNodes.get(i+1).mLocation); 
@@ -500,15 +556,20 @@ public class MapActivity<MainActivity> extends Activity implements
 		System.out.println("d: "+ d);
 		System.out.println("Math.abs(a+b-d): "+ Math.abs(a+b-d));
 		// if (a + b -d = 0 (ideal)) then b is the next node
-		// we allow 20 meter of delta, we can adjust it later
+		// we allow 20 meter of delta
 		float delta = Math.abs(a+b-d);
-		if (delta < 20){
+		
+		if(delta < nearestPoint){
+			nearestPoint = delta;
+			index = i+1;
+		}
+		/*if (delta < 20){
 			System.out.println("delta!: "+ delta);
 			return i+1;
-		  }
+		  }*/
 		}
 		// return the 1st node as the next node if none of the nodes are the next node in above logic
-	    return 1;
+	    return index;
 	}
 	
 	public static Float distanceBetweenTwoGeoPoints(GeoPoint p1, GeoPoint p2) {
@@ -674,6 +735,8 @@ public class MapActivity<MainActivity> extends Activity implements
 		// mSensorManager.registerListener(this, mOrientation,
 		// SensorManager.SENSOR_DELAY_NORMAL);
 		// sensor listener is causing a high CPU consumption...
+		
+		
 	}
 
 	@Override
@@ -773,7 +836,11 @@ public class MapActivity<MainActivity> extends Activity implements
 		}
 
 		EditText locationEdit = (EditText) findViewById(SeditResId);
-		locationEdit.setText(addressDisplayName);
+		
+		
+		
+		
+		locationEdit.setText(addressDisplayName.substring(0,addressDisplayName.indexOf(",")));
 		locationEdit.setSelection(0);
 
 	}
@@ -1064,8 +1131,8 @@ public class MapActivity<MainActivity> extends Activity implements
 
 	void updateUIWithRoad(Road road) {
 		mRoadNodeMarkers.getItems().clear();
-		TextView textView = (TextView) findViewById(R.id.routeInfo);
-		textView.setText("");
+		//TextView textView = (TextView) findViewById(R.id.routeInfo);
+		//textView.setText("");
 		List<Overlay> mapOverlays = map.getOverlays();
 		if (mRoadOverlay != null) {
 			mapOverlays.remove(mRoadOverlay);
@@ -1096,7 +1163,7 @@ public class MapActivity<MainActivity> extends Activity implements
 		putRoadNodes(road);
 		map.invalidate();
 		// Set route info in the text view:
-		textView.setText(routeDesc);
+		//textView.setText(routeDesc);
 	}
 
 	/**
@@ -1654,7 +1721,7 @@ public class MapActivity<MainActivity> extends Activity implements
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.option_menu, menu);
 
-		switch (mWhichRouteProvider) {
+/*	switch (mWhichRouteProvider) {
 		case OSRM:
 			menu.findItem(R.id.menu_route_osrm).setChecked(true);
 			break;
@@ -1671,7 +1738,7 @@ public class MapActivity<MainActivity> extends Activity implements
 		case GOOGLE_FASTEST:
 			menu.findItem(R.id.menu_route_google).setChecked(true);
 			break;
-		}
+		}*/
 
 		/*
 		 * if (map.getTileProvider().getTileSource() ==
@@ -1778,7 +1845,7 @@ public class MapActivity<MainActivity> extends Activity implements
 			 * R.id.menu_save_file: openLocalFileDialog(false); return true;
 			 * case R.id.menu_kml_clear: mKmlDocument = new KmlDocument();
 			 * updateUIWithKml(); return true;
-			 */
+			 *//*
 		case R.id.menu_route_osrm:
 			mWhichRouteProvider = OSRM;
 			item.setChecked(true);
@@ -1803,7 +1870,7 @@ public class MapActivity<MainActivity> extends Activity implements
 			mWhichRouteProvider = GOOGLE_FASTEST;
 			item.setChecked(true);
 			getRoadAsync();
-			return true;
+			return true;*/
 			/*
 			 * case R.id.menu_tile_mapnik: setStdTileProvider();
 			 * map.setTileSource(TileSourceFactory.MAPNIK);
@@ -1878,8 +1945,8 @@ public class MapActivity<MainActivity> extends Activity implements
 			 */
 			mSpeed = pLoc.getSpeed() * 3.6;
 			long speedInt = Math.round(mSpeed);
-			TextView speedTxt = (TextView) findViewById(R.id.speed);
-			speedTxt.setText(speedInt + " km/h");
+			//TextView speedTxt = (TextView) findViewById(R.id.speed);
+			//speedTxt.setText(speedInt + " km/h");
 
 			// TODO: check if speed is not too small
 			if (mSpeed >= 0.1) {
@@ -1903,6 +1970,13 @@ public class MapActivity<MainActivity> extends Activity implements
 		
 		
 		//rakib.....
+		try {
+			if(routingActive)
+			speakOutTheRoute();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 
